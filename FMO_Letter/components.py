@@ -97,6 +97,7 @@ class Components:
         ]))
         # return address_table
         self._flow.append(address_table)
+        self._flow.append(Spacer(1, 8))
     
     def _header_block(self):
         header_block = [
@@ -128,48 +129,63 @@ class Components:
             ("BOTTOMPADDING", (0,0), (-1,-1), 0),
         ]))
         return date_and_title
-    
-    def	_add_top_right_contract_info(self):
         
+    def _add_top_right_contract_info(self):
         date_str = self._contract_data.get('FMO-MATURE-DATE', '')  # default if not present
         date_object = datetime.strptime(date_str, "%Y%m%d")
         contract_date = date_object.strftime("%B %d, %Y")
-        
+
         contract_number_fw = fixed_width(self._contract_data.get('CONTRACT-NUMBER', ''), 
-                                         FIELD_SPECS['CONTRACT_NUMBER'], align='right')
+                                        FIELD_SPECS['CONTRACT_NUMBER'], align='right')
         annuitant_fw = fixed_width(self._contract_data.get('ANNUITANT-NAME', ''), 
-                                   FIELD_SPECS['ANNUITANT_NAME'])
+                                FIELD_SPECS['ANNUITANT_NAME'])
         owner_fw = fixed_width(self._contract_data.get('CONTRACT-OWNER-NAME', ''), 
-                               FIELD_SPECS['CONTRACT_OWNER_NAME'])
+                            FIELD_SPECS['CONTRACT_OWNER_NAME'])
         represent_fw = fixed_width(self._contract_data.get('REPRESENT-NAME', ''), 
-                                   FIELD_SPECS['REPRESENT_NAME'])
+                                FIELD_SPECS['REPRESENT_NAME'])
         phone_fw = fixed_width(self._contract_data.get('PHONE-NUMBER', ''), 
-                               FIELD_SPECS['PHONE_NUMBER'])
-        
-        contract_info_table = Table([
-                [Paragraph("Contract Number:", self.styles_Body), Paragraph(contract_number_fw, self.styles_Body)],
-                [Paragraph("Contract Date:", self.styles_Body), Paragraph(contract_date, self.styles_Body)],
-                [Paragraph("Name of Annuitant:", self.styles_Body), Paragraph(annuitant_fw.strip(), self.styles_Body)],
-                [Paragraph("Contract Owner:", self.styles_Body), Paragraph(owner_fw.strip(), self.styles_Body)],
-                [Paragraph("Your Representative:", self.styles_Body), Paragraph(represent_fw.strip(), self.styles_Body)],
-                [Paragraph("Telephone:", self.styles_Body), Paragraph(phone_fw.strip(), self.styles_Body)],
-            ], colWidths=[110, 140], hAlign="LEFT")
-        
+                            FIELD_SPECS['PHONE_NUMBER'])
+
+        data = [
+            ["Contract Number:", contract_number_fw],
+            ["Contract Date:", contract_date],
+            ["Name of Annuitant:", annuitant_fw.strip()],
+            ["Contract Owner:", owner_fw.strip()],
+            ["Your Representative:", represent_fw.strip()],
+            ["Telephone:", phone_fw.strip()],
+        ]
+
+        contract_info_table = Table(data, colWidths=[110, 140], hAlign="LEFT")
+
         contract_info_table.setStyle(TableStyle([
-                ("BOX", (0,0), (-1,-1), 0, colors.black),
-                ("LEFTPADDING", (0,0), (-1,-1), 0),
-                ("RIGHTPADDING", (0,0), (-1,-1), 0),
-                ("TOPPADDING", (0,0), (-1,-1), 0),
-                ("BOTTOMPADDING", (0,0), (-1,-1), 0),
-            ]))
+            # 🔲 Draw grid lines for all cells (rows + columns)
+            ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+
+            # Outer border (optional — makes edges bolder)
+            ("BOX", (0, 0), (-1, -1), 1.2, colors.black),
+
+            # Padding and alignment
+            ("LEFTPADDING", (0, 0), (-1, -1), 3),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+
+            # Fonts for labels vs. values
+            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),  # Left column bold
+            ("FONTNAME", (1, 0), (1, -1), "Helvetica"),       # Right column normal
+            ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+        ]))
+
         return contract_info_table
-        
+
     def _top_table(self, header_block, main_info_block):
         top_table = Table([
             ["", header_block, main_info_block]
         ], colWidths=[30, 240, 270])
         top_table.setStyle(TableStyle([
-            ("BOX", (0,0), (-1,-1), 0, colors.black),
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            # ("BOX", (0,0), (-1,-1), 0, colors.black),
             ("VALIGN", (0,0), (-1,-1), "TOP"),
             ("LEFTPADDING", (0,0), (-1,-1), 0),
             ("RIGHTPADDING", (0,0), (-1,-1), 0),
@@ -178,6 +194,7 @@ class Components:
         ]))
         # return top_table
         self._flow.append(top_table)
+        self._flow.append(Spacer(1, 8))
     
     def _assistance_table(self):
         assist_table = Table([
@@ -193,6 +210,7 @@ class Components:
         ]))
         # return assist_table  
         self._flow.append(assist_table)        
+        self._flow.append(Spacer(1, 8))
 
     def _add_notice_body(self, flow):
         """
@@ -272,28 +290,21 @@ class Components:
 
         main_info_block = [date_and_title, Spacer(1, 10), contract_info_table]
 
-
-        top_table = self._top_table(header_block, main_info_block)
-        # self._flow.append(top_table)
-        self._flow.append(Spacer(1, 8))
-        
-        self._create_address_string()
-        # address_table = self._create_address_string()
-        # self._flow.append(address_table)
-        self._flow.append(Spacer(1, 8))
-        
+        self._top_table(header_block, main_info_block)       
+        self._create_address_string()        
         self._assistance_table()
-        # assist_table = self._assistance_table()
-        # self._flow.append(assist_table)
-        self._flow.append(Spacer(1, 8))
         
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
         
         self._add_notice_body(self._flow)
         self._flow.append(PageBreak())
-        # self._flow.append(top_table)
+
         self._flow.append(self._top_table(header_block, main_info_block))
+        self._create_address_string()        
+        self._assistance_table()
+        self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
+        self._flow.append(Spacer(1, 12))
         build_doc(self._flow, filename)
 
         
