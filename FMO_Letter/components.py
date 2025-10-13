@@ -13,6 +13,9 @@ from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg
 from Utils.utils import fixed_width, get_unique_filename, get_raw_data
 from template import register_fonts, build_doc
 from reportlab.platypus import Frame, KeepInFrame
+# from Utils.document_templates import IRDocTemplate
+from reportlab.platypus import BaseDocTemplate, PageTemplate
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Flowable, PageBreak
 
 class FMOBar(Flowable):
     def __init__(self, width, height, text):
@@ -92,7 +95,8 @@ class Components:
             ("TOPPADDING", (0,0), (-1,-1), 0),
             ("BOTTOMPADDING", (0,0), (-1,-1), 0),
         ]))
-        return address_table
+        # return address_table
+        self._flow.append(address_table)
     
     def _header_block(self):
         header_block = [
@@ -172,7 +176,8 @@ class Components:
             ("TOPPADDING", (0,0), (-1,-1), 0),
             ("BOTTOMPADDING", (0,0), (-1,-1), 0),
         ]))
-        return top_table
+        # return top_table
+        self._flow.append(top_table)
     
     def _assistance_table(self):
         assist_table = Table([
@@ -186,80 +191,8 @@ class Components:
             ("TOPPADDING", (0,0), (-1,-1), 0),
             ("BOTTOMPADDING", (0,0), (-1,-1), 0),
         ]))
-        return assist_table          
-
-    # def _add_notice_body(self, flow):
-    #     """
-    #     Adds the formatted notice text centered horizontally within the page,
-    #     using the fixed top/bottom coordinates from the provided spec.
-    #     """
-    #     body_lines = notice_info  # imported from static_data.py
-
-    #     # Define paragraph style
-    #     notice_style = ParagraphStyle(
-    #         name="NoticeText",
-    #         fontName="Courier",
-    #         fontSize=9,
-    #         leading=12,
-    #         alignment=TA_JUSTIFY,
-    #         spaceBefore=0,
-    #         spaceAfter=8,
-    #     )
-
-    #     # Build paragraph list
-    #     paragraphs = []
-    #     for key, value in body_lines.items():
-    #         if value and value[0].strip():
-    #             paragraphs.append(Paragraph(value[0].strip(), notice_style))
-    #         else:
-    #             paragraphs.append(Spacer(1, 6))
-
-    #     # Add closing section
-    #     closing_text = [
-    #         Paragraph("Sincerely,", notice_style),
-    #         Spacer(1, 10),
-    #         Paragraph("Retirement Service Solutions", notice_style),
-    #         Spacer(1, 16),
-    #         Paragraph("cc: Wayne Curtis, ChFC, CLU", notice_style),
-    #         Spacer(1, 12),
-    #         Paragraph(
-    #             "Income Manager Annuities are issued by Equitable Life Insurance Company "
-    #             "and are distributed by EQUITABLE Distributors, LLC.",
-    #             notice_style,
-    #         ),
-    #     ]
-    #     paragraphs.extend(closing_text)
-
-    #     # --- FRAME POSITIONING ---
-    #     # original coordinates from spec
-    #     y0, y1 = 155, 652
-    #     frame_width = 586.76 - 38  # original width (~568.76)
-    #     height = y1 - y0
-
-    #     # dynamically center on LETTER page (8.5" wide = 612 pts)
-    #     page_width = LETTER[0]
-    #     x0 = (page_width - frame_width) / 2
-    #     x1 = x0 + frame_width
-
-    #     # create frame
-    #     notice_frame = Frame(
-    #         x0,
-    #         y0,
-    #         frame_width,
-    #         height,
-    #         leftPadding=10,
-    #         bottomPadding=10,
-    #         rightPadding=10,
-    #         topPadding=10,
-    #         showBoundary=0,  # use 1 for testing alignment
-    #     )
-
-    #     # keep content together and shrink if needed
-    #     notice_story = KeepInFrame(frame_width, height, paragraphs, mode="shrink")
-
-    #     # append to flow
-    #     flow.append(notice_story)
-
+        # return assist_table  
+        self._flow.append(assist_table)        
 
     def _add_notice_body(self, flow):
         """
@@ -326,106 +259,45 @@ class Components:
         notice_story = KeepInFrame(width, height, paragraphs, mode="shrink")
 
         # Append the frame to flow
-        flow.append(notice_story)
-
-
-    # def _add_notice_body(self, flow):
-    #     """
-    #     Adds the formatted notice text inside a fixed coordinate frame area.
-    #     Coordinates from provided data:
-    #     x0=18, y0=255, x1=586, y1=652
-    #     """
-    #     body_lines = notice_info  # imported from static_data.py
-
-    #     # Combine all text paragraphs into one continuous flow
-    #     paragraphs = []
-    #     notice_style = ParagraphStyle(
-    #         name="NoticeText",
-    #         fontName="Courier",
-    #         fontSize=9,
-    #         leading=12,
-    #         alignment=TA_JUSTIFY,
-    #         spaceBefore=0,
-    #         spaceAfter=8,
-    #     )
-
-    #     for key, value in body_lines.items():
-    #         if value and value[0].strip():
-    #             paragraphs.append(Paragraph(value[0].strip(), notice_style))
-    #         else:
-    #             paragraphs.append(Spacer(1, 6))
-
-    #     # Add closing text and footer
-    #     closing_text = [
-    #         Paragraph("Sincerely,", notice_style),
-    #         Spacer(1, 10),
-    #         Paragraph("Retirement Service Solutions", notice_style),
-    #         Spacer(1, 16),
-    #         Paragraph("cc: Wayne Curtis, ChFC, CLU", notice_style),
-    #         Spacer(1, 12),
-    #         Paragraph(
-    #             "Income Manager Annuities are issued by Equitable Life Insurance Company "
-    #             "and are distributed by EQUITABLE Distributors, LLC.",
-    #             notice_style,
-    #         ),
-    #     ]
-    #     paragraphs.extend(closing_text)
-
-    #     # Create frame coordinates (convert y from top-left to bottom-left)
-    #     x0, y0, x1, y1 = 54, 255, 622.76, 652
-
-    #     width = x1 - x0
-    #     height = y1 - y0
-
-    #     # Wrap all paragraphs into a frame box
-    #     self.notice_frame = Frame(
-    #         x0,
-    #         y0,
-    #         width,
-    #         height,
-    #         leftPadding=0,
-    #         bottomPadding=0,
-    #         rightPadding=0,
-    #         topPadding=0,
-    #         showBoundary=1,  # set to 1 to visualize during testing
-    #     )
-    #     self.notice_frame.addFromList(paragraphs, self.c)
-
-    #     # Keep paragraphs together within frame
-    #     notice_story = KeepInFrame(586.76 - 54, 652 - 255, [self.notice_frame], mode="shrink")
-
-    #     # Append the paragraphs to the flow
-    #     flow.append(notice_story)
-
+        self._flow.append(notice_story)
 
 
     def	generate_entire_flow_components(self, filename="test_output.pdf"): 
         '''this method will contain code of generate_custom_pdf() method to call all internal methods'''
 
-        filename = get_unique_filename(filename)
-        flow = []
-        
+        filename = get_unique_filename(filename)       
         header_block = self._header_block()
         date_and_title = self._add_date_and_title()
         contract_info_table = self._add_top_right_contract_info()
 
         main_info_block = [date_and_title, Spacer(1, 10), contract_info_table]
 
-        top_table = self._top_table(header_block, main_info_block)
-        flow.append(top_table)
-        flow.append(Spacer(1, 8))
 
-        address_table = self._create_address_string()
-        flow.append(address_table)
-        flow.append(Spacer(1, 8))
-        assist_table = self._assistance_table()
-        flow.append(assist_table)
-        flow.append(Spacer(1, 8))
-        flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
-        flow.append(Spacer(1, 12))
-        self._add_notice_body(flow)
-        build_doc(flow, filename)
+        top_table = self._top_table(header_block, main_info_block)
+        # self._flow.append(top_table)
+        self._flow.append(Spacer(1, 8))
         
+        self._create_address_string()
+        # address_table = self._create_address_string()
+        # self._flow.append(address_table)
+        self._flow.append(Spacer(1, 8))
+        
+        self._assistance_table()
+        # assist_table = self._assistance_table()
+        # self._flow.append(assist_table)
+        self._flow.append(Spacer(1, 8))
+        
+        self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
+        self._flow.append(Spacer(1, 12))
+        
+        self._add_notice_body(self._flow)
+        self._flow.append(PageBreak())
+        # self._flow.append(top_table)
+        self._flow.append(self._top_table(header_block, main_info_block))
+        build_doc(self._flow, filename)
+
+        
+    
     # def	_generate_extras(): pass
     # def	_add_top_right_text(): pass
     # def	_add_bold_title(): pass

@@ -26,7 +26,7 @@ class MyLineFlowable(Flowable):
 
 
 if __name__ == '__main__':
-    data= get_data('Resource\ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
+    data= get_data('Resource\\ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
     raw_data = get_raw_data(data[0])
     comp = Components(raw_data)
     comp.generate_entire_flow_components(filename="FMO_C.pdf")

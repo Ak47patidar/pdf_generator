@@ -62,7 +62,7 @@ CADIA_MONO_SEMILIGHT = FONT_MAP['cadia_mono_semilight']
 CADIA_MONO_BOLD = FONT_MAP['cadia_mono_bold']
 CADIA_MONO_LIGHT = FONT_MAP['cadia_mono_light']
 
-from Utils.document_templates import PageNumCanvasIR
+# from Utils.document_templates import PageNumCanvasIR
 def build_doc(flow, filename):
     filename = get_unique_filename(filename)
     doc = SimpleDocTemplate(filename, 

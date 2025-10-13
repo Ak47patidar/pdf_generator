@@ -6,10 +6,10 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
-from utils import get_data
+from Utils.utils import get_data
 from reportlab.lib.units import inch
 from datetime import datetime
-from static_data import FIELD_SPECS, notice_info, assistance_msg
+from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg
 
 
 # -------------------- Font registration --------------------
@@ -97,7 +97,7 @@ def fixed_width(value, length, align='left'):
 
 
 def get_unique_filename(filename):
-    output_dir = "A_Output_pdf"
+    output_dir = "Resource\\Output"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     base = os.path.join(output_dir, os.path.splitext(os.path.basename(filename))[0])
@@ -305,5 +305,5 @@ def generate_custom_pdf(data=None, filename="test_output.pdf"):
 
 
 if __name__ == '__main__':
-    data= get_data('A_input_pdf/ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
+    data= get_data('Resource/ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
     generate_custom_pdf(data[0])
