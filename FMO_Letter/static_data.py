@@ -40,29 +40,29 @@ company_names = {
 }
 
 notice_info = {
-    '0':['Our records indicate that a portion of your above referenced Accumulator Series variable annuity contract/certificate'
-         'is invested in the [FMO_MATURE_YEAR] Fixed Maturity Option (FMO). Your contract/certificate may refer to the FMOs as Guarantee'
-         'Periods. Your [FMO_MATURE_YEAR] FMO is scheduled to mature on [FMO_MATURE_DATE] with a maturity value of [FMO_MATURE_VALUE] on that date.',        
-         ],   
+    '0':["""Our records indicate that a portion of your above referenced Accumulator Series variable annuity contract/certificate
+         is invested in the [FMO_MATURE_YEAR] Fixed Maturity Option (FMO). Your contract/certificate may refer to the FMOs as Guarantee
+         Periods. Your [FMO_MATURE_YEAR] FMO is scheduled to mature on [FMO_MATURE_DATE] with a maturity value of [FMO_MATURE_VALUE] on that date.,        
+         """],   
     
     '1':[
-        'As of June 30, 2022, we will no longer accept new allocations or reinvestment instructions to FMOs. You may choose to'
-        'reinvest the value of this FMO at maturity among any or all of the investment options then available under your'
-        'contract/certificate. You may also withdraw these funds. Withdrawals may be subject to a contingent withdrawal'
-        'charge, may be subject to income tax and may be subject to an additional federal income tax penalty if you are younger'
-        'than 59 and one-half.',
-        ""],
+        """As of June 30, 2022, we will no longer accept new allocations or reinvestment instructions to FMOs. You may choose to
+        reinvest the value of this FMO at maturity among any or all of the investment options then available under your
+        contract/certificate. You may also withdraw these funds. Withdrawals may be subject to a contingent withdrawal
+        charge, may be subject to income tax and may be subject to an additional federal income tax penalty if you are younger
+        than 59 and one-half.
+        """],
     
-    '2':['We must receive your instructions with respect to the maturing FMO at our Processing Office by [FMO-RETURN-DATE].'
-         'Please complete and return the enclosed form by that date. Accordingly, if we do not hear from you, the maturing funds'
-         'will be reinvested into the EQ/Money Market.'],
+    '2':["""We must receive your instructions with respect to the maturing FMO at our Processing Office by [FMO-RETURN-DATE].
+         Please complete and return the enclosed form by that date. Accordingly, if we do not hear from you, the maturing funds
+         will be reinvested into the EQ/Money Market."""],
     
-    '3':['If you have any questions, please call your financial professional, [FMO-AGENT-NAME], or our Service Center at 1 -800-789-7771 .'],
-    '4':['Sincerely,'],
-    '5':['Retirement Service Solutions'],
-    '6':['cc: Wayne Curtis, ChFC, CLU'],
-    '7':['Income Manager Annuities are issued by Equitable Life Insurance Company'],
-    '8':['and are distributed by EQUITABLE Distributors, LLC.'],
+    '3':["""If you have any questions, please call your financial professional, [FMO-AGENT-NAME], or our Service Center at 1 -800-789-7771 ."""],
+    '4':["""Sincerely,"""],
+    '5':["""Retirement Service Solutions"""],
+    '6':["""cc: Wayne Curtis, ChFC, CLU"""],
+    '7':["""Income Manager Annuities are issued by Equitable Life Insurance Company"""],
+    '8':["""and are distributed by EQUITABLE Distributors, LLC."""],
     
 }
 

@@ -211,106 +211,182 @@ class Components:
         # return assist_table  
         self._flow.append(assist_table)        
         self._flow.append(Spacer(1, 8))
+    
+    # def _add_notice_body(self, notice_data):
+    #     """
+    #     Creates a single-column table from fundlist_notice data,
+    #     preserving multiline text exactly as defined.
+    #     """
 
-    def _add_notice_body(self, flow):
-        """
-        Adds the formatted notice text inside a fixed coordinate frame area.
-        Coordinates from provided data:
-        x0=18, y0=255, x1=586, y1=652
-        """
-        body_lines = notice_info  # imported from static_data.py
+    #     # Define paragraph style
+    #     fundlist_style = ParagraphStyle(
+    #         name="NoticeText",
+    #         fontName="Courier",
+    #         fontSize=9,
+    #         leading=12,
+    #         alignment=TA_JUSTIFY,
+    #         spaceBefore=0,
+    #         spaceAfter=4,
+    #     )
 
-        # Combine all text paragraphs into one continuous flow
-        paragraphs = []
-        notice_style = ParagraphStyle(
-            name="NoticeText",
-            fontName="Courier",
-            fontSize=9,
-            leading=12,
-            alignment=TA_JUSTIFY,
-            spaceBefore=0,
-            spaceAfter=8,
-        )
+    #     table_data = []
+    #     for key, value in notice_data.items():
+    #         if value and value[0].strip():
+    #             # Preserve line breaks — replace real \n or split strings
+    #             text = value[0].replace("\n", "<br/>")
+    #             table_data.append([Paragraph(text.strip(), fundlist_style)])
+    #         else:
+    #             table_data.append([" "])
 
-        for key, value in body_lines.items():
-            if value and value[0].strip():
-                paragraphs.append(Paragraph(value[0].strip(), notice_style))
-            else:
-                paragraphs.append(Spacer(1, 6))
+    #     # Create table
+    #     table = Table(table_data, colWidths=[540])
 
+    #     # Apply table styling
+    #     table.setStyle(TableStyle([
+    #         ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+    #         ("BOX", (0, 0), (-1, -1), 1, colors.black),
+    #         ("LEFTPADDING", (0, 0), (-1, -1), 4),
+    #         ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+    #         ("TOPPADDING", (0, 0), (-1, -1), 2),
+    #         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    #         ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    #     ]))
 
-        # Create frame coordinates (convert y from top-left to bottom-left)
-        x0, y0, x1, y1 = 54, 255, 622.76, 652
-
-        width = x1 - x0
-        height = y1 - y0
-
-        # Wrap all paragraphs into a frame box
-        notice_frame = Frame(
-            x0,
-            y0,
-            width,
-            height,
-            leftPadding=0,
-            bottomPadding=0,
-            rightPadding=0,
-            topPadding=0,
-            showBoundary=1,  # set to 1 to visualize during testing
-        )
-
-        # Keep paragraphs together within frame
-        notice_story = KeepInFrame(width, height, paragraphs, mode="shrink")
-
-        # Append the frame to flow
-        self._flow.append(notice_story)
-
-
-    def _add_fundlist_notice(self, flow):
+    #     self._flow.append(table)
+    #     self._flow.append(Spacer(1, 12))
+        
+    def _add_notice_body(self, notice_data):
         """
         Creates a single-column table from fundlist_notice data,
-        preserving multiline text exactly as defined.
+        where each row can have its own style (font size, leading, spacing).
         """
+        # from reportlab.platypus import Table, TableStyle, Paragraph, Spacer
+        # from reportlab.lib import colors
+        # from reportlab.lib.styles import ParagraphStyle
+        # from reportlab.lib.enums import TA_LEFT, TA_JUSTIFY
 
-        fund_notice_lines = fundlist_notice
+        fund_notice_lines = notice_data  # imported from static_data.py
 
-        # Define paragraph style
-        fundlist_style = ParagraphStyle(
-            name="NoticeText",
+        # 🎨 Define style map for each row index
+        fund_notice_styles = {
+            "0": ParagraphStyle(
+                name="Header",
+                fontName="Helvetica-Bold",
+                fontSize=11,
+                leading=14,
+                alignment=TA_LEFT,
+                spaceAfter=8,
+            ),
+            "1": ParagraphStyle(
+                name="Body1",
+                fontName="Courier",
+                fontSize=9,
+                leading=12,
+                alignment=TA_JUSTIFY,
+                spaceAfter=6,
+            ),
+            "2": ParagraphStyle(
+                name="FundList",
+                fontName="Courier-Bold",
+                fontSize=9.5,
+                leading=12,
+                alignment=TA_LEFT,
+                spaceBefore=6,
+                spaceAfter=6,
+            ),
+            "3": ParagraphStyle(
+                name="Body2",
+                fontName="Courier",
+                fontSize=9,
+                leading=12,
+                alignment=TA_JUSTIFY,
+                spaceAfter=6,
+            ),
+            "4": ParagraphStyle(
+                name="SubHeader",
+                fontName="Helvetica-Bold",
+                fontSize=10,
+                leading=13,
+                alignment=TA_LEFT,
+                spaceBefore=8,
+                spaceAfter=4,
+            ),
+            "5": ParagraphStyle(
+                name="IndentedText",
+                fontName="Courier",
+                fontSize=8.5,
+                leading=11,
+                alignment=TA_LEFT,
+                leftIndent=10,
+                spaceAfter=6,
+            ),
+            "6": ParagraphStyle(
+                name="Signature",
+                fontName="Courier-Bold",
+                fontSize=9,
+                leading=12,
+                alignment=TA_LEFT,
+                spaceBefore=10,
+            ),
+            "7": ParagraphStyle(
+                name="SSN",
+                fontName="Courier",
+                fontSize=9,
+                leading=12,
+                alignment=TA_LEFT,
+                spaceAfter=8,
+            ),
+            "8": ParagraphStyle(
+                name="Address",
+                fontName="Courier",
+                fontSize=8.5,
+                leading=11,
+                alignment=TA_LEFT,
+                spaceBefore=8,
+            ),
+        }
+
+        # Default fallback style
+        default_style = ParagraphStyle(
+            name="Default",
             fontName="Courier",
             fontSize=9,
             leading=12,
-            alignment=TA_JUSTIFY,
-            spaceBefore=0,
-            spaceAfter=4,
+            alignment=TA_LEFT,
         )
 
+        # 🧱 Build table data
         table_data = []
         for key, value in fund_notice_lines.items():
             if value and value[0].strip():
-                # Preserve line breaks — replace real \n or split strings
                 text = value[0].replace("\n", "<br/>")
-                table_data.append([Paragraph(text.strip(), fundlist_style)])
+                style = fund_notice_styles.get(key, default_style)
+                table_data.append([Paragraph(text.strip(), style)])
             else:
                 table_data.append([" "])
 
-        # Create table
+        # 🧾 Create table
         table = Table(table_data, colWidths=[540])
 
-        # Apply table styling
+        # ✏️ Apply black border and padding
         table.setStyle(TableStyle([
             ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
             ("BOX", (0, 0), (-1, -1), 1, colors.black),
-            ("LEFTPADDING", (0, 0), (-1, -1), 4),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-            ("TOPPADDING", (0, 0), (-1, -1), 2),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ]))
 
         self._flow.append(table)
         self._flow.append(Spacer(1, 12))
 
-
+        
+        
+        
+        
+        
     def	generate_entire_flow_components(self, filename="test_output.pdf"): 
         '''this method will contain code of generate_custom_pdf() method to call all internal methods'''
 
@@ -328,7 +404,7 @@ class Components:
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
         
-        self._add_notice_body(self._flow)
+        self._add_notice_body(notice_info)
         self._flow.append(PageBreak())
 
         self._flow.append(self._top_table(header_block, main_info_block))
@@ -336,7 +412,7 @@ class Components:
         self._assistance_table()
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
-        self._add_fundlist_notice(self._flow)
+        self._add_notice_body(fundlist_notice)
         build_doc(self._flow, filename)
 
         
