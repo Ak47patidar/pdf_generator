@@ -9,7 +9,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
-from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg
+from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg, fundlist_notice
 from Utils.utils import fixed_width, get_unique_filename, get_raw_data
 from template import register_fonts, build_doc
 from reportlab.platypus import Frame, KeepInFrame
@@ -238,21 +238,6 @@ class Components:
             else:
                 paragraphs.append(Spacer(1, 6))
 
-        # Add closing text and footer
-        closing_text = [
-            Paragraph("Sincerely,", notice_style),
-            Spacer(1, 10),
-            Paragraph("Retirement Service Solutions", notice_style),
-            Spacer(1, 16),
-            Paragraph("cc: Wayne Curtis, ChFC, CLU", notice_style),
-            Spacer(1, 12),
-            Paragraph(
-                "Income Manager Annuities are issued by Equitable Life Insurance Company "
-                "and are distributed by EQUITABLE Distributors, LLC.",
-                notice_style,
-            ),
-        ]
-        paragraphs.extend(closing_text)
 
         # Create frame coordinates (convert y from top-left to bottom-left)
         x0, y0, x1, y1 = 54, 255, 622.76, 652
@@ -280,6 +265,52 @@ class Components:
         self._flow.append(notice_story)
 
 
+    def _add_fundlist_notice(self, flow):
+        """
+        Creates a single-column table from fundlist_notice data,
+        preserving multiline text exactly as defined.
+        """
+
+        fund_notice_lines = fundlist_notice
+
+        # Define paragraph style
+        fundlist_style = ParagraphStyle(
+            name="NoticeText",
+            fontName="Courier",
+            fontSize=9,
+            leading=12,
+            alignment=TA_JUSTIFY,
+            spaceBefore=0,
+            spaceAfter=4,
+        )
+
+        table_data = []
+        for key, value in fund_notice_lines.items():
+            if value and value[0].strip():
+                # Preserve line breaks — replace real \n or split strings
+                text = value[0].replace("\n", "<br/>")
+                table_data.append([Paragraph(text.strip(), fundlist_style)])
+            else:
+                table_data.append([" "])
+
+        # Create table
+        table = Table(table_data, colWidths=[540])
+
+        # Apply table styling
+        table.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+            ("BOX", (0, 0), (-1, -1), 1, colors.black),
+            ("LEFTPADDING", (0, 0), (-1, -1), 4),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ]))
+
+        self._flow.append(table)
+        self._flow.append(Spacer(1, 12))
+
+
     def	generate_entire_flow_components(self, filename="test_output.pdf"): 
         '''this method will contain code of generate_custom_pdf() method to call all internal methods'''
 
@@ -305,6 +336,7 @@ class Components:
         self._assistance_table()
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
+        self._add_fundlist_notice(self._flow)
         build_doc(self._flow, filename)
 
         

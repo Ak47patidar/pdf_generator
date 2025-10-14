@@ -1,0 +1,66 @@
+           05 LETTER-IND                    PIC X(02)                   00010000
+              88 FMO-LETTER                 VALUE 'FM'                  00011000
+              88 GIRO-LETTER                VALUE 'GR'                  00012000
+           05 FILLER1                       PIC X(01) VALUE '|'.        00013000
+           05 TEXT-IND                      PIC X(02)                   00020000
+              88 FMO-TXT1                   VALUE 'F1'                  00030000
+              88 FMO-TXT2                   VALUE 'F2'                  00040000
+              88 GIRO-TXT1                  VALUE 'G1'                  00041000
+              88 GIRO-TXT2                  VALUE 'G2'                  00042000
+           05 FILLER2                       PIC X(01) VALUE '|'.        00043000
+           05 CONTRACT-NUMBER               PIC Z99999999.              00050000
+           05 FILLER3                       PIC X(01) VALUE '|'.        00050100
+           05 COPY-IND                      PIC X(01)                   00050200
+           05 FILLER4                       PIC X(01) VALUE '|'.        00050300
+           05 CYCLE-DATE                    PIC 9(8).                   00051000
+           05 FILLER5                       PIC X(01) VALUE '|'.        00051100
+           05 ANNUITANT-NAME                PIC X(60)                   00051200
+           05 FILLER6                       PIC X(01) VALUE '|'.        00051300
+           05 CONTRACT-OWNER-NAME           PIC X(60)                   00051400
+           05 FILLER7                       PIC X(01) VALUE '|'.        00051500
+           05 REPRESENT-NAME                PIC X(60)                   00051600
+           05 FILLER8                       PIC X(01) VALUE '|'.        00051700
+           05 PHONE-NUMBER                  PIC X(14)                   00051800
+           05 FILLER9                       PIC X(01) VALUE '|'.        00051900
+           05 AGENT-CODE                    PIC X(12)                   00052000
+           05 FILLER10                      PIC X(01) VALUE '|'.        00052100
+           05 MAIL-ADDRESSEE-NAME           PIC X(38) VALUE SPACES.     00052200
+           05 FILLER11                      PIC X(01) VALUE '|'.        00052300
+           05 ADDRESSEE-LINE1               PIC X(38) VALUE SPACES.     00052400
+           05 FILLER12                      PIC X(01) VALUE '|'.        00052500
+           05 ADDRESSEE-LINE2               PIC X(38) VALUE SPACES.     00052600
+           05 FILLER13                      PIC X(01) VALUE '|'.        00052700
+           05 ADDRESSEE-LINE3               PIC X(38) VALUE SPACES.     00052800
+           05 FILLER14                      PIC X(01) VALUE '|'.        00052900
+           05 CITY-STATE-ZIP-CODE           PIC X(32) VALUE SPACES.     00053000
+           05 FILLER15                      PIC X(01) VALUE '|'.        00053100
+           05 COMPANY-CODE                  PIC X(03)                   00053200
+           05 FILLER16                      PIC X(01) VALUE '|'.        00053300
+           05 PLAN-MARKET-NAME              PIC X(50)                   00053400
+           05 FILLER17                      PIC X(01) VALUE '|'.        00053500
+*******BELOW FIELDS ARE DYNAMIC THOSE ARE BASED ON TYPE OF LETTER       00053600
+           05 FMO-MATURE-YEAR               PIC X(4).                   00054000
+           05 FILLER18                      PIC X(01) VALUE '|'.        00054100
+           05 FMO-MATURE-DATE               PIC 9(8).                   00055000
+           05 FILLER19                      PIC X(01) VALUE '|'.        00056000
+           05 FMO-MATURE-VALUE              PIC X(13).                  00057000
+           05 FILLER20                      PIC X(01) VALUE '|'.        00058000
+           05 FMO-RETURN-DATE               PIC 9(8).                   00060000
+           05 FILLER21                      PIC X(01) VALUE '|'.        00061000
+           05 FMO-AGENT-NAME                PIC X(50).                  00063000
+           05 FILLER22                      PIC X(01) VALUE '|'.        00063100
+           05 FMO-CC-NAME                   PIC X(50).                  00064000
+           05 FILLER23                      PIC X(01) VALUE '|'.        00064100
+           05 NUMBER-OF-FUNDS               PIC X(03).                  00064200
+           05 FILLER24                      PIC X(01) VALUE '|'.        00064300
+           05 RETURN_BY_MMDD                PIC 9(8).                   00064400
+           05 FILLER25                      PIC X(01) VALUE '|'.        00064500
+           05 EARLIEST-FMO                  PIC X(50).                  00064600
+           05 FILLER26                      PIC X(01) VALUE '|'.        00064700
+           05 EARLIEST-RATE                 PIC Z9.99.                  00064800
+           05 FILLER27                      PIC X(01) VALUE '|'.        00064900
+           05 WS-FUND-TABLE      OCCURS 210 TIMES.                      00065000
+             10 WS-FUND-NUM-OCCUR      PIC X(5).                        00066000
+             10 FILLER                 PIC X(01) VALUE '|'.             00066100
+             10 WS-FUND-OCCUR          PIC X(30).                       00067000
+             10 FILLER                 PIC X(01) VALUE '|'.             00068000

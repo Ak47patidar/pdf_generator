@@ -58,7 +58,11 @@ notice_info = {
          'will be reinvested into the EQ/Money Market.'],
     
     '3':['If you have any questions, please call your financial professional, [FMO-AGENT-NAME], or our Service Center at 1 -800-789-7771 .'],
-    '4':[],
+    '4':['Sincerely,'],
+    '5':['Retirement Service Solutions'],
+    '6':['cc: Wayne Curtis, ChFC, CLU'],
+    '7':['Income Manager Annuities are issued by Equitable Life Insurance Company'],
+    '8':['and are distributed by EQUITABLE Distributors, LLC.'],
     
 }
 
@@ -66,3 +70,32 @@ assistance_msg = "If you need assistance, please call your representative at the
                  "number above, or call our processing office toll free at 1-800-789-7771, <br/>" \
                  "or visit our website at www.equitable.com."                    
 
+
+fundlist_notice = {
+    '0': ["""INCOME MANAGER FIXED MATURITY OPTIONS"""],
+
+    '1': ["""____ I elect to have the maturity value of my expiring FMO reinvested as follows:
+             (Please indicate dollar amounts or percentages. Percentages should equal 100%.)"""],
+
+    '2': ["""<<Fundlist>>"""],
+
+    '3': ["""____ I elect to have the maturity value of my expiring FMO distributed to me as a withdrawal.
+                  (Distributions are a taxable event, and may be subject to withdrawal charges and an additional 10% federal income tax penalty.)"""],
+
+    '4': ["""WITHHOLDING INSTRUCTIONS:"""],
+
+    '5': ["""___ A. I do not want federal income tax withheld. (U.S. residence and Social Security number required)
+___ B. I want 10% federal income tax withheld from the taxable amount of this distribution.
+___ C. U.S. Resident: ___Yes ___No"""],
+
+    '6': ["""____________________________________     _________________________
+Signature of owner                       Date"""],
+
+    '7': ["""____________________________________
+Social Security Number"""], 
+
+    '8': ["""Return to: Equitable
+500 Plaza Drive
+6th Floor
+Secaucus, NJ 07094"""],     
+}

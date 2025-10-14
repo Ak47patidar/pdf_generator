@@ -27,4 +27,9 @@ mapping_order_for_delimited_file = [
     'EARLIEST-FMO',
     'EARLIEST-RATE',
     'WS-FUND-TABLE',
+    # 'WS-FUND-TABLE':{
+    #     'WS-FUND-NUM-OCCUR':[],
+    #     'WS-FUND-OCCUR':[],
+    #     },
+    # {'WS-FUND-TABLE':[]}
 ]
