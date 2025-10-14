@@ -51,7 +51,11 @@ def register_fonts():
         font_map['cadia_mono_light'] = 'CadiaMono-Light'
     except Exception:
         font_map['cadia_mono_light'] = 'Courier'
+
     return font_map
+
+
+
 
 FONT_MAP = register_fonts()
 DEFAULT_FONT, DEFAULT_BOLD = FONT_MAP['arial']
@@ -61,8 +65,10 @@ ARIAL_BLACK = FONT_MAP['arial_black']
 CADIA_MONO_SEMILIGHT = FONT_MAP['cadia_mono_semilight']
 CADIA_MONO_BOLD = FONT_MAP['cadia_mono_bold']
 CADIA_MONO_LIGHT = FONT_MAP['cadia_mono_light']
+# Cambria_FONT, Cambria_BOLD = FONT_MAP['cambria']
 
-# from Utils.document_templates import PageNumCanvasIR
+
+
 def build_doc(flow, filename):
     filename = get_unique_filename(filename)
     doc = SimpleDocTemplate(filename, 
