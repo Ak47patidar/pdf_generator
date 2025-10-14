@@ -6,7 +6,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus.flowables import Flowable
 from reportlab.platypus import FrameBreak, Paragraph, Table, Image, Spacer
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Flowable
-from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
 from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg, fundlist_notice
@@ -78,80 +78,79 @@ class Components:
         #style for each para in the notice
         self.notice_info_styles = {
             "0": ParagraphStyle(
-                name="Header",
-                fontName="arial",
-                # fontName=Cambria_FONT,
-                fontSize=9,
-                leading=12,
-                alignment=TA_LEFT,
-                spaceAfter=8,
-            ),
+                    name="Our",
+                    fontName="Calibri",
+                    fontSize=10,
+                    leading=14,  # taller height between lines
+                    alignment=TA_LEFT,
+                    spaceAfter=8,
+                    wordWrap="CJK",  # tighter wrapping
+                ),
             "1": ParagraphStyle(
-                name="Body1",
+                name="As_of",
                 fontName="Calibri",
                 # fontName=Cambria_FONT,
-                fontSize=9,
-                leading=12,
+                fontSize=10,
+                leading=14,
                 alignment=TA_JUSTIFY,
                 spaceAfter=6,
             ),
             "2": ParagraphStyle(
-                name="FundList",
+                name="We_must",
                 fontName="calibri",
-                fontSize=9.5,
+                fontSize=10,
                 leading=12,
                 alignment=TA_LEFT,
                 spaceBefore=6,
                 spaceAfter=6,
             ),
             "3": ParagraphStyle(
-                name="Body2",
-                fontName="Courier",
-                fontSize=9,
+                name="If_you",
+                fontName="Calibri",
+                fontSize=10,
                 leading=12,
                 alignment=TA_JUSTIFY,
                 spaceAfter=6,
             ),
             "4": ParagraphStyle(
-                name="SubHeader",
-                fontName="Helvetica-Bold",
+                name="Sincerely,",
+                fontName="Calibri",
                 fontSize=10,
-                leading=13,
-                alignment=TA_LEFT,
+                leading=20,
+                alignment=TA_CENTER,
                 spaceBefore=8,
                 spaceAfter=4,
             ),
             "5": ParagraphStyle(
-                name="IndentedText",
-                fontName="Courier",
-                fontSize=8.5,
-                leading=11,
-                alignment=TA_LEFT,
+                name="Retirement",
+                fontName="Calibri",
+                fontSize=10,
+                leading=80,
+                alignment=TA_CENTER,
                 leftIndent=10,
                 spaceAfter=6,
             ),
             "6": ParagraphStyle(
-                name="Signature",
-                fontName="Courier-Bold",
-                fontSize=9,
-                leading=12,
+                name="cc",
+                fontName="Calibri",
+                fontSize=10,
+                leading=30,
                 alignment=TA_LEFT,
-                spaceBefore=10,
             ),
             "7": ParagraphStyle(
-                name="SSN",
-                fontName="Courier",
-                fontSize=9,
-                leading=12,
-                alignment=TA_LEFT,
+                name="Income",
+                fontName="Calibri",
+                fontSize=10,
+                leading=11,
+                alignment=TA_CENTER,
                 spaceAfter=8,
             ),
             "8": ParagraphStyle(
-                name="Address",
-                fontName="Courier",
-                fontSize=8.5,
+                name="and",
+                fontName="Calibri",
+                fontSize=10,
                 leading=11,
-                alignment=TA_LEFT,
+                alignment=TA_CENTER,
                 spaceBefore=8,
             ),
         }
@@ -332,8 +331,8 @@ class Components:
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
 
             # Fonts for labels vs. values
-            ("FONTNAME", (0, 0), (0, -1), "Helvetica"),  # Left column bold
-            ("FONTNAME", (0, 0), (1, -1), "Helvetica"),       # Right column normal
+            ("FONTNAME", (0, 0), (0, -1), "Helvetica"),  # for Left column 
+            ("FONTNAME", (0, 0), (1, -1), "Helvetica"),  # for Right column
             ("FONTSIZE", (0, 0), (-1, -1), 8.5),
         ]))
 
@@ -396,18 +395,18 @@ class Components:
             if value and value[0].strip():
                 text = value[0].replace("\n", "<br/>")
                 style = notice_styles.get(key, default_style)
-                table_data.append([Paragraph(text.strip(), style)])
+                table_data.append(["", Paragraph(text.strip(), style), ""]) #added to blank columns to manage front and back space in rows
             else:
                 table_data.append([" "])
 
         # 🧾 Create table
-        table = Table(table_data, colWidths=[580])
+        table = Table(table_data, colWidths=[15,550,15])
 
         # ✏️ Apply black border and padding
         table.setStyle(TableStyle([
-            # ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+            ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
             ("BOX", (0, 0), (-1, -1), 1, colors.black),
-            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("LEFTPADDING", (0, 0), (-1, -1), 2),
             ("RIGHTPADDING", (0, 0), (-1, -1), 5),
             ("TOPPADDING", (0, 0), (-1, -1), 3),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
@@ -443,7 +442,7 @@ class Components:
         self._assistance_table()
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
-        # self._add_notice_body(fundlist_notice, self.fundlist_notice_styles)
+        self._add_notice_body(fundlist_notice, self.fundlist_notice_styles)
         build_doc(self._flow, filename)
 
         
