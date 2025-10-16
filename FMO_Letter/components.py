@@ -430,15 +430,7 @@ class Components:
             for ph in placeholders:
                 placeholder_tag = f"[{ph}]"
                 if ph in ("FMO-MATURE-DATE", "FMO-RETURN-DATE"):
-                    raw_val = self._contract_data.get(ph, "")
-                    if raw_val:
-                        try:
-                            dt = datetime.strptime(raw_val, "%Y%m%d")
-                            replace_value = dt.strftime("%B %-d, %Y")  # → November 10, 2025
-                        except ValueError:
-                            replace_value = raw_val
-                    else:
-                        replace_value = ""
+                    replace_value = datetime.strptime(self._contract_data.get(ph, ""), "%Y%m%d").strftime("%B %d, %Y")
                 else:
                     replace_value = self._contract_data.get(ph, "")
 
