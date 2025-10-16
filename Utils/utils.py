@@ -1,14 +1,43 @@
 import data_mapping as dm
 import os
 
+# def get_data(file_path, field_names=None):
+#     """
+#     Reads a pipe-delimited file and returns a list of dictionaries with field names as keys,
+#     stripping leading/trailing spaces from values.
+#     """
+#     if not field_names:
+#         field_names = dm.mapping_order_for_delimited_file
+        
+#     data_list = []
+#     with open(file_path, 'r', encoding='utf-8') as f:
+#         for line in f:
+#             line = line.strip()
+#             if not line:
+#                 continue
+#             values = line.split('|')
+#             record = {field: values[i].strip() if i < len(values) else None for i, field in enumerate(field_names)}
+#             data_list.append(record)
+#     data = get_data_dict(data_list[0])
+#     return data
+
+# def get_data_dict(data):
+#     if data is None:
+#         raise ValueError("Data dictionary is required for PDF generation.")
+
+#     raw_data = {k.upper(): v for k, v in data.items()}
+#     return raw_data
+
+
 def get_data(file_path, field_names=None):
     """
-    Reads a pipe-delimited file and returns a list of dictionaries with field names as keys,
-    stripping leading/trailing spaces from values.
+    Reads a pipe-delimited file and returns a dictionary with field names as keys,
+    stripping leading/trailing spaces from values. Also constructs a fund table
+    under the key 'WS-FUND-TABLE'.
     """
     if not field_names:
         field_names = dm.mapping_order_for_delimited_file
-        
+
     data_list = []
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
@@ -18,11 +47,52 @@ def get_data(file_path, field_names=None):
             values = line.split('|')
             record = {field: values[i].strip() if i < len(values) else None for i, field in enumerate(field_names)}
             data_list.append(record)
-    return data_list
+
+    # Process first (and usually only) record
+    data = get_data_dict(data_list[0])
+
+    # Extract NUMBER-OF-FUNDS
+    num_of_funds = int(data.get("NUMBER-OF-FUNDS", "0") or 0)
+    if num_of_funds > 0:
+        # Locate index of NUMBER-OF-FUNDS field
+        num_index = field_names.index("NUMBER-OF-FUNDS")
+
+        # Each fund has two entries: number and name
+        start_index = num_index + 4  # skip RETURN_BY_MMDD, EARLIEST-FMO, EARLIEST-RATE
+        # funds occupy 2 * num_of_funds fields after NUMBER-OF-FUNDS
+        fund_entries = values[start_index : start_index + (num_of_funds * 2)]
+
+        # Build fund list as pairs
+        fund_pairs = [
+            (fund_entries[i], fund_entries[i + 1]) 
+            for i in range(0, len(fund_entries), 2)
+        ]
+
+        # Build 5-column table (2 records per row)
+        ws_fund_table = []
+        for i in range(0, len(fund_pairs), 2):
+            left = fund_pairs[i]
+            right = fund_pairs[i + 1] if i + 1 < len(fund_pairs) else ("", "")
+            ws_fund_table.append([
+                "____", left[0].strip(), left[1].strip(), "","____", right[0].strip(), right[1].strip()
+            ])
+        data["WS-FUND-TABLE"] = ws_fund_table
+    else:
+        data["WS-FUND-TABLE"] = []
+
+    return data
+
+
+def get_data_dict(data):
+    """Normalize dictionary keys to uppercase."""
+    if data is None:
+        raise ValueError("Data dictionary is required for PDF generation.")
+    raw_data = {k.upper(): v for k, v in data.items()}
+    return raw_data
 
 
 def get_unique_filename(filename):
-    output_dir = "Resource\Output"
+    output_dir = "Resource\\Output"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     base = os.path.join(output_dir, os.path.splitext(os.path.basename(filename))[0])
@@ -58,11 +128,6 @@ def fixed_width(value, length, align='left'):
         return s.rjust(length)
     return s.ljust(length)
 
-def get_raw_data(data):
-    if data is None:
-        raise ValueError("Data dictionary is required for PDF generation.")
 
-    raw_data = {k.upper(): v for k, v in data.items()}
-    return raw_data
 
 

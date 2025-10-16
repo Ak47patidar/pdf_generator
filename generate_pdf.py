@@ -1,15 +1,8 @@
 
-from reportlab.lib.pagesizes import LETTER
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Flowable
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+from reportlab.platypus import Flowable
 from reportlab.lib import colors
 
-from template import register_fonts, build_doc
-from Utils.utils import get_data, get_unique_filename, fixed_width, get_raw_data
-from reportlab.lib.units import inch
-from datetime import datetime
-from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg
+from Utils.utils import get_data
 from FMO_Letter.components import Components
 
 
@@ -27,8 +20,15 @@ class MyLineFlowable(Flowable):
 
 if __name__ == '__main__':
     data= get_data('Resource\\ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
-    raw_data = get_raw_data(data[0])
-    comp = Components(raw_data)
+    comp = Components(data)
     comp.generate_entire_flow_components(filename="FMO_C.pdf")
+    
+    # import json
+    # # assuming you already have your dictionary in variable `data`
+    # with open("data.json", "w", encoding="utf-8") as f:
+    #     json.dump(data, f, indent=4, ensure_ascii=False)
+
+    # print("✅ Data successfully saved to data.json")
+
     
 

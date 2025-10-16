@@ -1,3 +1,43 @@
+# mapping_order_for_delimited_file = [
+#     'LETTER-IND',
+#     'TEXT-IND',
+#     'CONTRACT-NUMBER',
+#     'COPY-IND',
+#     'CYCLE-DATE',
+#     'ANNUITANT-NAME',
+#     'CONTRACT-OWNER-NAME',
+#     'REPRESENT-NAME',
+#     'PHONE-NUMBER',
+#     'AGENT-CODE',
+#     'MAIL-ADDRESSEE-NAME',
+#     'ADDRESSEE-LINE1',
+#     'ADDRESSEE-LINE2',
+#     'ADDRESSEE-LINE3',
+#     'CITY-STATE-ZIP-CODE',
+#     'COMPANY-CODE',
+#     'PLAN-MARKET-NAME',
+#     'FMO-MATURE-YEAR',
+#     'FMO-MATURE-DATE',
+#     'FMO-MATURE-VALUE',
+#     'FMO-RETURN-DATE',
+#     'FMO-AGENT-NAME',
+#     'FMO-CC-NAME',
+#     'NUMBER-OF-FUNDS',
+#     'RETURN_BY_MMDD',
+#     'EARLIEST-FMO',
+#     'EARLIEST-RATE',
+#     'WS-FUND-TABLE',
+#     # 'WS-FUND-TABLE':{
+#     #     'WS-FUND-NUM-OCCUR':[],
+#     #     'WS-FUND-OCCUR':[],
+#     #     },
+#     # {'WS-FUND-TABLE':[]}
+# ]
+
+
+
+
+# ✅ Updated mapping list (added WS-FUND-TABLE as placeholder at end)
 mapping_order_for_delimited_file = [
     'LETTER-IND',
     'TEXT-IND',
@@ -26,10 +66,7 @@ mapping_order_for_delimited_file = [
     'RETURN_BY_MMDD',
     'EARLIEST-FMO',
     'EARLIEST-RATE',
-    'WS-FUND-TABLE',
-    # 'WS-FUND-TABLE':{
-    #     'WS-FUND-NUM-OCCUR':[],
-    #     'WS-FUND-OCCUR':[],
-    #     },
-    # {'WS-FUND-TABLE':[]}
+    'WS-FUND-TABLE',  # derived field (not in input, populated programmatically)
 ]
+
+

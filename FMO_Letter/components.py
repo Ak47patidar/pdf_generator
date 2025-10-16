@@ -10,7 +10,7 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
 from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg, fundlist_notice
-from Utils.utils import fixed_width, get_unique_filename, get_raw_data
+from Utils.utils import fixed_width, get_unique_filename
 from template import register_fonts, build_doc
 from reportlab.platypus import Frame, KeepInFrame
 # from Utils.document_templates import IRDocTemplate
@@ -157,7 +157,7 @@ class Components:
         
         self.fundlist_notice_styles = {
             "0": ParagraphStyle(
-                name="Header",
+                name="INCOME",
                 fontName="Helvetica-Bold",
                 fontSize=11,
                 leading=14,
@@ -165,7 +165,7 @@ class Components:
                 spaceAfter=8,
             ),
             "1": ParagraphStyle(
-                name="Body1",
+                name="elect1",
                 fontName="Courier",
                 fontSize=9,
                 leading=12,
@@ -182,7 +182,7 @@ class Components:
                 spaceAfter=6,
             ),
             "3": ParagraphStyle(
-                name="Body2",
+                name="elect2",
                 fontName="Courier",
                 fontSize=9,
                 leading=12,
@@ -190,7 +190,7 @@ class Components:
                 spaceAfter=6,
             ),
             "4": ParagraphStyle(
-                name="SubHeader",
+                name="WITHHOLDING",
                 fontName="Helvetica-Bold",
                 fontSize=10,
                 leading=13,
@@ -199,7 +199,7 @@ class Components:
                 spaceAfter=4,
             ),
             "5": ParagraphStyle(
-                name="IndentedText",
+                name="ABC",
                 fontName="Courier",
                 fontSize=8.5,
                 leading=11,
@@ -224,7 +224,7 @@ class Components:
                 spaceAfter=8,
             ),
             "8": ParagraphStyle(
-                name="Address",
+                name="returnto",
                 fontName="Courier",
                 fontSize=8.5,
                 leading=11,
@@ -374,10 +374,13 @@ class Components:
         self._flow.append(assist_table)        
         self._flow.append(Spacer(1, 8))
         
+
     def _add_notice_body(self, notice_data, notice_styles):
         """
-        Creates a single-column table from fundlist_notice data,
-        where each row can have its own style (font size, leading, spacing).
+        Creates a single-column table from notice_data (fundlist_notice or notice_info),
+        replaces placeholders using self._contract_data,
+        formats dates properly, and applies per-row styling.
+        Supports embedding FUNDLIST-TABLE dynamically.
         """
 
         # Default fallback style
@@ -389,25 +392,74 @@ class Components:
             alignment=TA_LEFT,
         )
 
-        # 🧱 Build table data
+        # Define placeholders
+        placeholders = [
+            "FMO-MATURE-YEAR",
+            "FMO-MATURE-DATE",
+            "FMO-MATURE-VALUE",
+            "FMO-RETURN-DATE",
+            "FMO-AGENT-NAME",
+            "FMO-CC-NAME",
+            "FUNDLIST-TABLE",
+        ]
+
         table_data = []
         for key, value in notice_data.items():
-            if value and value[0].strip():
-                text = value[0].replace("\n", "<br/>")
-                style = notice_styles.get(key, default_style)
-                table_data.append(["", Paragraph(text.strip(), style), ""]) #added to blank columns to manage front and back space in rows
-            else:
+            if not value or not value[0].strip():
                 table_data.append([" "])
+                continue
 
-        # 🧾 Create table
-        table = Table(table_data, colWidths=[15,550,15])
+            text = value[0]
 
-        # ✏️ Apply black border and padding
+            # If FUNDLIST-TABLE placeholder exists in this paragraph,
+            # handle it as a separate flowable (not text)
+            if "[FUNDLIST-TABLE]" in text:
+                # Add the text before the table, if any
+                before_text = text.split("[FUNDLIST-TABLE]")[0].strip()
+                if before_text:
+                    style = notice_styles.get(key, default_style)
+                    table_data.append([Paragraph(before_text.replace("\n", "<br/>"), style)])
+
+                # Add the actual fund table as a new row (not wrapped in Paragraph)
+                fund_table = self._create_fundlist_table()
+                if fund_table:
+                    table_data.append([fund_table])
+                continue
+
+            # 🔄 Replace placeholders dynamically
+            for ph in placeholders:
+                placeholder_tag = f"[{ph}]"
+                if ph in ("FMO-MATURE-DATE", "FMO-RETURN-DATE"):
+                    raw_val = self._contract_data.get(ph, "")
+                    if raw_val:
+                        try:
+                            dt = datetime.strptime(raw_val, "%Y%m%d")
+                            replace_value = dt.strftime("%B %-d, %Y")  # → November 10, 2025
+                        except ValueError:
+                            replace_value = raw_val
+                    else:
+                        replace_value = ""
+                else:
+                    replace_value = self._contract_data.get(ph, "")
+
+                text = text.replace(placeholder_tag, str(replace_value))
+
+            # Convert newlines to <br/> for Paragraph formatting
+            text = text.replace("\n", "<br/>")
+
+            # Add as normal paragraph
+            style = notice_styles.get(key, default_style)
+            table_data.append([Paragraph(text.strip(), style)])
+
+        # 🧾 Create main notice table
+        table = Table(table_data, colWidths=[580])
+
+        # ✏️ Apply styling and spacing
         table.setStyle(TableStyle([
             ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
             ("BOX", (0, 0), (-1, -1), 1, colors.black),
-            ("LEFTPADDING", (0, 0), (-1, -1), 2),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+            ("LEFTPADDING", (0, 0), (-1, -1), 15),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 15),
             ("TOPPADDING", (0, 0), (-1, -1), 3),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
@@ -415,7 +467,30 @@ class Components:
 
         self._flow.append(table)
         self._flow.append(Spacer(1, 12))
-              
+
+
+    def _create_fundlist_table(self):
+        """Creates a sub-table for the FUNDLIST section."""
+        fund_table_data = self._contract_data.get("WS-FUND-TABLE", [])
+        if not fund_table_data:
+            return None  # No data to display
+
+        fund_table = Table(fund_table_data, colWidths=[25, 30, 150, 30, 25, 30, 150])
+
+        fund_table.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+            ("BOX", (0, 0), (-1, -1), 1, colors.black),
+            ("LEFTPADDING", (0, 0), (-1, -1), 2),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("FONTNAME", (0, 0), (-1, -1), "Courier"),
+            ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+        ]))
+
+        return fund_table
+
         
     def	generate_entire_flow_components(self, filename="test_output.pdf"): 
         '''this method will contain code of generate_custom_pdf() method to call all internal methods'''
@@ -443,6 +518,7 @@ class Components:
         self._flow.append(FMOBar(LETTER[0] - 30, 22, "F M O   M A T U R I T Y   N O T I C E"))
         self._flow.append(Spacer(1, 12))
         self._add_notice_body(fundlist_notice, self.fundlist_notice_styles)
+        self._create_fundlist_table()
         build_doc(self._flow, filename)
 
         

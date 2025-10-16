@@ -1,0 +1,49 @@
+{
+    "LETTER-IND": "FM",
+    "TEXT-IND": "F1",
+    "CONTRACT-NUMBER": "312000264",
+    "COPY-IND": "C",
+    "CYCLE-DATE": "20250912",
+    "ANNUITANT-NAME": "VARSHA BHATIA",
+    "CONTRACT-OWNER-NAME": "VARSHA BHATIA",
+    "REPRESENT-NAME": "WAYNE CURTIS, CHFC, CLU",
+    "PHONE-NUMBER": "2037313064",
+    "AGENT-CODE": "097265-521",
+    "MAIL-ADDRESSEE-NAME": "VARSHA BHATIA",
+    "ADDRESSEE-LINE1": "529 JUMANO COURT",
+    "ADDRESSEE-LINE2": "SUFFERN, NY   10901",
+    "ADDRESSEE-LINE3": "",
+    "CITY-STATE-ZIP-CODE": "",
+    "COMPANY-CODE": "EFC",
+    "PLAN-MARKET-NAME": "Accumulator Plus (NQ)",
+    "FMO-MATURE-YEAR": "2025",
+    "FMO-MATURE-DATE": "20251110",
+    "FMO-MATURE-VALUE": "$209,205.67",
+    "FMO-RETURN-DATE": "20251105",
+    "FMO-AGENT-NAME": "WAYNE CURTIS, CHFC, CLU",
+    "FMO-CC-NAME": "Wayne Curtis, ChFC, CLU",
+    "NUMBER-OF-FUNDS": "004",
+    "RETURN_BY_MMDD": "",
+    "EARLIEST-FMO": "",
+    "EARLIEST-RATE": "",
+    "WS-FUND-TABLE": [
+        [
+            "____",
+            "01142",
+            "EQ/Inter Govt Bond",
+            "",
+            "____",
+            "01143",
+            "Multimanager Technologyonal"
+        ],
+        [
+            "____",
+            "01144",
+            "EQ/Money Market",
+            "",
+            "____",
+            "01145",
+            "EQ/Inter Govt Bond"
+        ]
+    ]
+}
