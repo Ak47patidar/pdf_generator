@@ -9,7 +9,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
-from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg, fundlist_notice
+from FMO_Letter.static_data import FIELD_SPECS, notice_info, assistance_msg, fundlist_notice, company_names
 from Utils.utils import fixed_width, get_unique_filename
 from template import register_fonts, build_doc
 from reportlab.platypus import Frame, KeepInFrame
@@ -258,11 +258,13 @@ class Components:
         self._flow.append(Spacer(1, 8))
     
     def _header_block(self):
+        company_code = self._contract_data.get('COMPANY-CODE', '')
+        company_name = company_names[0][company_code] if company_code in company_names[0] else company_names[0][""]
         header_block = [
-                Paragraph("<b>Equitable Financial Life Insurance Company</b>", self.styles_MonoSmall),
-                Paragraph("<b>Equitable Retirement Service Solutions</b>", self.styles_MonoSmall),
-                Paragraph("<b>P.O. Box 1016</b>", self.styles_MonoSmall),
-                Paragraph("<b>Charlotte NC 28201-1016</b>", self.styles_MonoSmall) 
+                Paragraph(company_name, self.styles_MonoSmall),
+                Paragraph(company_names[1], self.styles_MonoSmall),
+                Paragraph(company_names[2], self.styles_MonoSmall),
+                Paragraph(company_names[3], self.styles_MonoSmall) 
             ]
         return header_block
 
@@ -484,10 +486,10 @@ class Components:
         return fund_table
 
         
-    def	generate_entire_flow_components(self, filename="test_output.pdf"): 
+    def	generate_entire_flow_components(self): 
         '''this method will contain code of generate_custom_pdf() method to call all internal methods'''
 
-        filename = get_unique_filename(filename)       
+        filename = get_unique_filename(self._contract_data)       
         header_block = self._header_block()
         date_and_title = self._add_date_and_title()
         contract_info_table = self._add_top_right_contract_info()

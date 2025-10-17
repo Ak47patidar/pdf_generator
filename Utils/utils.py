@@ -1,32 +1,6 @@
 import data_mapping as dm
 import os
-
-# def get_data(file_path, field_names=None):
-#     """
-#     Reads a pipe-delimited file and returns a list of dictionaries with field names as keys,
-#     stripping leading/trailing spaces from values.
-#     """
-#     if not field_names:
-#         field_names = dm.mapping_order_for_delimited_file
-        
-#     data_list = []
-#     with open(file_path, 'r', encoding='utf-8') as f:
-#         for line in f:
-#             line = line.strip()
-#             if not line:
-#                 continue
-#             values = line.split('|')
-#             record = {field: values[i].strip() if i < len(values) else None for i, field in enumerate(field_names)}
-#             data_list.append(record)
-#     data = get_data_dict(data_list[0])
-#     return data
-
-# def get_data_dict(data):
-#     if data is None:
-#         raise ValueError("Data dictionary is required for PDF generation.")
-
-#     raw_data = {k.upper(): v for k, v in data.items()}
-#     return raw_data
+from datetime import datetime
 
 
 def get_data(file_path, field_names=None):
@@ -90,20 +64,56 @@ def get_data_dict(data):
     raw_data = {k.upper(): v for k, v in data.items()}
     return raw_data
 
-
-def get_unique_filename(filename):
+def get_unique_filename(data):
     output_dir = "Resource\\Output"
+
+    # ✅ Handle case where a string (filename) is passed instead of a dict
+    if isinstance(data, str):
+        filename = data
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        base = os.path.join(output_dir, os.path.splitext(os.path.basename(filename))[0])
+        ext = os.path.splitext(filename)[1] or ".pdf"
+        counter = 1
+        new_filename = f"{base}{ext}"
+
+        while os.path.exists(new_filename):
+            new_filename = f"{base}_{counter}{ext}"
+            counter += 1
+
+        return new_filename
+
+    # ✅ Normal case: data is a dictionary
+    ind = data.get('LETTER-IND', "")
+    policy_number = data.get('CONTRACT-NUMBER', "")
+    copy_ind = data.get('COPY-IND', "")
+
+    current_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    # Determine letter indicator
+    if ind == "FM":
+        letter_ind = "FMO"
+    elif ind == "GR":
+        letter_ind = "GIRO"
+    else:
+        letter_ind = ""
+
+    filename = f"{letter_ind}_{copy_ind}_{policy_number}_{current_timestamp}.pdf"
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+
     base = os.path.join(output_dir, os.path.splitext(os.path.basename(filename))[0])
     ext = os.path.splitext(filename)[1]
     counter = 1
     new_filename = f"{base}{ext}"
+
     while os.path.exists(new_filename):
         new_filename = f"{base}_{counter}{ext}"
         counter += 1
-    return new_filename
 
+    return new_filename
 
 
 def fixed_width(value, length, align='left'):
