@@ -19,10 +19,10 @@ class MyLineFlowable(Flowable):
 
 
 if __name__ == '__main__':
-    data= get_data('Resource\\ECOTN.D1.FMO.SAMPLE.FILE.CLIENT')
-    comp = Components(data)
-    # comp.generate_entire_flow_components(filename="FMO_C.pdf")
-    comp.generate_entire_flow_components()
+    data= get_data('Resource\\input_multiple_policy_dummy')
+    for each_policy in data:
+        comp = Components(each_policy)
+        comp.generate_entire_flow_components()
     
     # import json
     # # assuming you already have your dictionary in variable `data`
